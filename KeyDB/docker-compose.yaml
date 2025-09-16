@@ -1,0 +1,19 @@
+
+version: "3.8"
+services:
+  keydb:
+    image: eqalpha/keydb:latest
+    container_name: keydb
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 100000
+        hard: 100000
+    ports:
+      - "6379:6379"
+    volumes:
+      - /opt/keydb/conf/keydb.conf:/etc/keydb/keydb.conf:ro
+      - /opt/keydb/data:/data
+      - /opt/keydb/logs:/var/log/keydb
+    command: ["keydb-server", "/etc/keydb/keydb.conf"]
+
