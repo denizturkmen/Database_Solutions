@@ -40,4 +40,46 @@ keydb-cli -a YourStrongPass! info replication
 keydb-cli -a YourStrongPass! role
 
 
+
+# template
+docker run --rm --network bridge eqalpha/keydb \
+  keydb-benchmark -h <HOST_IP> \ 
+  -p 6379 -a YourStrongPass! -t get,set -n 50000 -c 500 -q
+
+
+sudo sysctl -w vm.overcommit_memory=1
+root@953b933bd972:/data# keydb-cli -h 127.0.0.1 -p 6379 -a YourStrongPass! CONFIG GET appendonly
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+1) "appendonly"
+2) "no"
+root@953b933bd972:/data# 
+
+
+root@953b933bd972:/data# keydb-cli -h 127.0.0.1 -p 6379 -a YourStrongPass! CONFIG GET appendonly
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+1) "appendonly"
+2) "no"
+root@953b933bd972:/data# keydb-benchmark -h 127.0.0.1 -p 6379 -a YourStrongPass! -t get,set -n 200000 -c 500 -P 32 -q
+SET: 162469.55 requests per second, p50=92.159 msec                      
+GET: 291120.81 requests per second, p50=53.023 msec                     
+
+root@953b933bd972:/data# keydb-cli -h 127.0.0.1 -p 6379 -a YourStrongPass! CONFIG GET appendonly^C
+root@953b933bd972:/data# gerekirse AOF\342\200\231yi appendfsync everysec ile a\303\247,^C
+root@953b933bd972:/data# keydb-cli -h 127.0.0.1 -p 6379 -a YourStrongPass! CONFIG SET appendonly yes
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+OK
+root@953b933bd972:/data# keydb-cli -h 127.0.0.1 -p 6379 -a YourStrongPass! CONFIG SET appendfsync everysec
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+OK
+root@953b933bd972:/data# keydb-benchmark -h 127.0.0.1 -p 6379 -a YourStrongPass! -t get,set -n 200000 -c 500 -P 32 -q
+SET: 129115.55 requests per second, p50=115.135 msec                      
+GET: 252844.50 requests per second, p50=59.135 msec                     
+
+root@953b933bd972:/data# keydb-cli -h 127.0.0.1 -p 6379 -a YourStrongPass! CONFIG GET appendfsync         
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+1) "appendfsync"
+2) "everysec"
+root@953b933bd972:/data# 
+
+
 ```
